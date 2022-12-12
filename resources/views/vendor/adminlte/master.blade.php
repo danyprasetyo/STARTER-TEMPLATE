@@ -105,6 +105,8 @@
     @endif
 
     {{-- Custom Scripts --}}
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     @yield('adminlte_js')
 
 <script>
@@ -157,16 +159,6 @@
         }
         @endif
 
-        @if ($errors->any())
-        @foreach(error->all() as $error)
-        Swal.fire({
-            type: 'error',
-            title: "Ooops",
-            text: "{{ $error }}",
-        })
-        @endforeach
-        @endif      
-        
         //konfig
         @if ($errors->any())
         Swal.fire({

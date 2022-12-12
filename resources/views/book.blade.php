@@ -12,7 +12,7 @@
         <div class="card-header">{{ __('Pengelolaan Buku') }}</div>
 
         <div class="card-body">
-            <button class="btn btn-primary" data-toggle="modal" data-target="$tambahBukuModal">
+            <button class="btn btn-primary" data-toggle="modal" data-target="#tambahBukuModal">
              <i class="fa fa-plus"></i>Tambah Data   
             </button>
             <hr/>
@@ -48,13 +48,12 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="cover">Cover</label>
-                                    <input type="text" class="form-control" name="cover" id="cover" required/>
+                                    <input type="file" class="form-control" name="cover" id="cover" required/>
                                 </div>
                              </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
                                     <button type="submit" class="btn btn-primary">Kirim</button>
-                                
                             </form>
                         </div>
                     </div>

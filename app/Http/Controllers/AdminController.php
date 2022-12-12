@@ -51,7 +51,8 @@ class AdminController extends Controller
          $book->save();
 
          $notification = array(
-            'message' => 'Data buku berhasil ditambahkan', 'alert-type' => 'succes'
+            'message' => 'Data buku berhasil ditambahkan', 
+            'alert-type' => 'success'
          );
 
          return redirect()->route('admin.books')->with($notification);

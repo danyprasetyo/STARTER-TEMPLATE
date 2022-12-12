@@ -25,15 +25,15 @@ Route::get('home', [App\Http\Controllers\HomeController::class, 'index'])->name(
 
 
 
-Route::get('/home', function() {
-    return view('home');
-})->name('home')->middleware('auth');
+// Route::get('/home', function() {
+//     return view('home');
+// })->name('home')->middleware('auth');
 
 Route::get('admin/books', [App\Http\Controllers\AdminController::class, 'books'])
 ->name('admin.books')
 ->middleware('is_admin');
 
-Route::get('admin/book', [App\Http\Controllers\AdminController::class, 'submit_book'])
+Route::post('admin/books', [App\Http\Controllers\AdminController::class, 'submit_book'])
 ->name('admin.book.submit')
 ->middleware('is_admin');
 
