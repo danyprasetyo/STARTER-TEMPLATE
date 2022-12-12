@@ -323,7 +323,7 @@ return [
             'text' => 'Buku',
             'url' =>  'admin/books',
             'icon' => 'fas fa-fw fa-book',
-            'can' => 'IsAdmin',
+            'can' => 'isAdmin',
         ],
         
       
