@@ -1,7 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+ use App\Http\Controllers\AdminController;
+ use App\Http\Controllers\HomeController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -19,9 +20,9 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('admin/home', [App\Http\Controllers\AdminController::class, 'index'])->name('admin.home')
+Route::get('admin/home', [AdminController::class, 'index'])->name('admin.home')
 ->middleware('is_admin');
-Route::get('home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('home', [HomeController::class, 'index'])->name('home');
 
 
 
@@ -29,14 +30,26 @@ Route::get('home', [App\Http\Controllers\HomeController::class, 'index'])->name(
 //     return view('home');
 // })->name('home')->middleware('auth');
 
-Route::get('admin/books', [App\Http\Controllers\AdminController::class, 'books'])
+Route::get('admin/books', [AdminController::class, 'books'])
 ->name('admin.books')
 ->middleware('is_admin');
 
-Route::post('admin/books', [App\Http\Controllers\AdminController::class, 'submit_book'])
+Route::post('admin/books', [AdminController::class, 'submit_book'])
 ->name('admin.book.submit')
 ->middleware('is_admin');
 
-Route::get('admin/book/update', [App\Http\Controllers\AdminController::class, 'update_book'])
+Route::get('admin/book/update', [AdminController::class, 'update_book'])
 ->name('admin.book.update')
 ->middleware('is_admin');
+Auth::routes();
+
+Route::get('/home', [HomeController::class, 'index'])->name('home');
+
+Route::patch('admin/home/update', [AdminController::class, 'update_book'])->name('admin.book.update')->middleware('is_admin');
+Route::get('admin/ajaxadmin/dataBuku{id}', [AdminController::class, 'getDataBuku']);
+
+Route::post('admin/books/delete/{id}', [AdminController::class, 'delete_book'])
+->name('admin.book.delete')
+->middleware('is_admin');
+
+Route::get('admin/print_books', [AdminController::class, 'print_books'])->name('admin.print.books')->middleware('is_admin');

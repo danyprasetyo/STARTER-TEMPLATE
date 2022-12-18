@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
+use PDF;
 
 class AdminController extends Controller
 {
@@ -24,37 +25,157 @@ class AdminController extends Controller
       $books = Book::all();
       return view('book', compact('user', 'books'));
    }
-   public function submit_book(Request $req){
-      $validate = $req->validate([
-         'judul' => 'required|max:255',
-         'penulis' => 'required',
-         'tahun' => 'required',
-         'penerbit' => 'required'
-      ]);
+//    public function submit_book(Request $req){
+//       $validate = $req->validate([
+//          'judul' => 'required|max:255',
+//          'penulis' => 'required',
+//          'tahun' => 'required',
+//          'penerbit' => 'required'
+//       ]);
 
-      $book = new Book;
-      $book->judul = $req->get('judul');
-      $book->penulis = $req->get('penulis');
-      $book->tahun = $req->get('tahun');
-      $book->penerbit = $req->get('penerbit');
+//       $book = new Book;
+//       $book->judul = $req->get('judul');
+//       $book->penulis = $req->get('penulis');
+//       $book->tahun = $req->get('tahun');
+//       $book->penerbit = $req->get('penerbit');
 
-      if ($req->hasFile('cover')){
-         $extension = $req->file('cover')->extension();
+//       if ($req->hasFile('cover')){
+//          $extension = $req->file('cover')->extension();
 
-         $filename = 'cover_buku_'.time().'.'.$extension;
+//          $filename = 'cover_buku_'.time().'.'.$extension;
 
-         $req->file('cover')->storeAs(
-            'public/cover_buku', $filename
-         );
-         $book->cover = $filename;
-      }
-         $book->save();
+//          $req->file('cover')->storeAs(
+//             'public/cover_buku', $filename
+//          );
+//          $book->cover = $filename;
+//       }
+//          $book->save();
 
-         $notification = array(
-            'message' => 'Data buku berhasil ditambahkan', 
+//          $notification = array(
+//             'message' => 'Data buku berhasil ditambahkan',
+//             'alert-type' => 'success'
+//          );
+
+//          return redirect()->route('admin.books')->with($notification);
+//    }
+public function submit_book(Request $req)
+{
+    $validate = $req->validate([
+        'judul' => 'required|max:255',
+        'penulis' => 'required',
+        'tahun' => 'required',
+        'penerbit' => 'required',
+        'cover' => 'file|mimes:jpg,jpeg,png,bmp',
+
+    ]);
+
+    $book = new Book;
+
+    $book->judul = $req->get('judul');
+    $book->penulis = $req->get('penulis');
+    $book->tahun = $req->get('tahun');
+    $book->penerbit = $req->get('penerbit');
+
+    if ($req->hasFile('cover')) {
+        $extension = $req->file('cover')->extension();
+        $filename = 'cover_buku' . time() . '.' . $extension;
+        $req->file('cover')->storeAs(
+            'public/cover_buku',
+            $filename
+        );
+        $book->cover = $filename;
+    }
+
+    $book->save();
+
+    $notification = [
+        [
+            'massage' => 'Book was Added',
             'alert-type' => 'success'
-         );
 
-         return redirect()->route('admin.books')->with($notification);
-   }
+        ]
+
+    ];
+    return redirect()->route('admin.books')->with($notification);
+}
+//AJAX PROCESS
+public function getDataBuku($id){
+    $buku = Book::find($id);
+
+    return response()->json($buku);
+}
+//update
+public function update_book(Request $req)
+{
+    $book = Book::find($req->get('id'));
+    $validate = $req->validate([
+        'judul' => 'required|max:255',
+        'penulis' => 'required',
+        'tahun' => 'required',
+        'penerbit' => 'required',
+        'cover' => 'file|mimes:jpg,jpeg,png,bmp'
+
+    ]);
+
+
+
+    $book->judul = $req->get('judul');
+    $book->penulis = $req->get('penulis');
+    $book->tahun = $req->get('tahun');
+    $book->penerbit = $req->get('penerbit');
+
+    if ($req->hasFile('cover')) {
+        $extension = $req->file('cover')->extension();
+        $filename = 'cover_buku' . time() . '.' . $extension;
+        $req->file('cover')->storeAs(
+            'public/cover_buku',
+            $filename
+        );
+
+        Storage::delete('public/cover_buku/' . $req->get('old_cover'));
+        $book->cover = $filename;
+    }
+
+    $book->save();
+
+    $notification = [
+        [
+            'massage' => 'Book was Change',
+            'alert-type' => 'success'
+
+        ]
+
+    ];
+    return redirect()->route('admin.books')->with($notification);
+}
+public function delete_book($id)
+{
+
+    $book = Book::find($id);
+
+    Storage::delete('public/cover_buku/' . $book->cover);
+
+    $book->delete();
+
+    $success = true;
+
+    $message = "Data Buku Berhasil dihapusz";
+
+    return response()->json([
+        'success' => $success,
+        'message' => $message,
+    ]);
+}
+//print pdf
+public function print_books()
+{
+    $books = Book::all();
+
+    view()->share('print_books', $books);
+
+    $pdf = Pdf::loadview('print_books', [
+        'books' => $books
+    ]);
+    return $pdf->download('data_buku.pdf');
+}
 }
