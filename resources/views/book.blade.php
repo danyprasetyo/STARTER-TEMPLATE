@@ -18,7 +18,18 @@
             <a href="{{ route('admin.print.books') }}" target="_blank" class="btn btn-secondary"> <i
                 class="fa fa-print"></i>
             Print PDF</a>
+            {{-- Excel --}}
+            <div class="btn-group" role="group" aria-label="Basic example">
 
+                {{-- Export excel --}}
+                <a href="{{ route('admin.book.export') }}" class="btn btn-info" target="_blank">Export</a>
+
+                {{-- Fitur Import Excel --}}
+
+                <button type="button" class="btn btn-warning" data-toggle="modal"
+                    data-target="#importDataModal">Import</button>
+
+            </div>
             <hr/>
 
             {{-- modal --}}
@@ -77,7 +88,43 @@
                     </div>
                 </div>
 
+                {{-- modal importt --}}
 
+                <div class="modal fade" id="importDataModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Import Data</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span
+                                        aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+
+                            <div class="modal-body">
+                                <form method="post" action="{{ route('admin.book.import') }}"
+                                    enctype="multipart/form-data">
+                                    @csrf
+                                    <div class="form-group">
+                                        <label for="cover">Upload File</label>
+                                        <input type="file" name="file" class="form-control">
+                                    </div>
+
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary"
+                                            data-dismiss="modal">Cancel</button>
+                                        <button type="submit" class="btn btn-primary">Import Book</button>
+                                    </div>
+
+                                </form>
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+
+                <hr>
 
         <table id="table-data" class="table table-bordered">
             <thead>
@@ -249,7 +296,7 @@
                             dataType: "JSON",
                             success: function(results) {
                                 if (results.success === true) {
-                                    swal.fire("Done!", results.message, "Success Bro");
+                                    swal.fire("Done!", results.message, "Data Berhasil Dihapus");
                                     //refresh page after 2sc
                                     setTimeout(() => {
                                         location.reload();

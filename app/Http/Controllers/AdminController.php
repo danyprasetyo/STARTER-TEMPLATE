@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\BooksExport;
+use App\Imports\BooksImport;
 use PDF;
 
 class AdminController extends Controller
@@ -25,39 +28,7 @@ class AdminController extends Controller
       $books = Book::all();
       return view('book', compact('user', 'books'));
    }
-//    public function submit_book(Request $req){
-//       $validate = $req->validate([
-//          'judul' => 'required|max:255',
-//          'penulis' => 'required',
-//          'tahun' => 'required',
-//          'penerbit' => 'required'
-//       ]);
-
-//       $book = new Book;
-//       $book->judul = $req->get('judul');
-//       $book->penulis = $req->get('penulis');
-//       $book->tahun = $req->get('tahun');
-//       $book->penerbit = $req->get('penerbit');
-
-//       if ($req->hasFile('cover')){
-//          $extension = $req->file('cover')->extension();
-
-//          $filename = 'cover_buku_'.time().'.'.$extension;
-
-//          $req->file('cover')->storeAs(
-//             'public/cover_buku', $filename
-//          );
-//          $book->cover = $filename;
-//       }
-//          $book->save();
-
-//          $notification = array(
-//             'message' => 'Data buku berhasil ditambahkan',
-//             'alert-type' => 'success'
-//          );
-
-//          return redirect()->route('admin.books')->with($notification);
-//    }
+//insert
 public function submit_book(Request $req)
 {
     $validate = $req->validate([
@@ -90,7 +61,7 @@ public function submit_book(Request $req)
 
     $notification = [
         [
-            'massage' => 'Book was Added',
+            'massage' => 'Data buku berhasil ditambahkan.',
             'alert-type' => 'success'
 
         ]
@@ -140,7 +111,7 @@ public function update_book(Request $req)
 
     $notification = [
         [
-            'massage' => 'Book was Change',
+            'massage' => 'Data Berhasil diUpdate.',
             'alert-type' => 'success'
 
         ]
@@ -177,5 +148,19 @@ public function print_books()
         'books' => $books
     ]);
     return $pdf->download('data_buku.pdf');
+}
+//export
+public function export(){
+    return Excel::download(new BooksExport, 'books.xlsx');
+}
+//import
+public function import(Request $req)
+{
+    Excel::import(new BooksImport, $req->file('file'));
+    $notification = array(
+        'message' => 'Import data berhasil dilakukan',
+        'alert-type' => 'success'
+    );
+    return redirect()->route('admin.books')->with($notification);
 }
 }

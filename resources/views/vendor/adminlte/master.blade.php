@@ -150,7 +150,7 @@
             Swal.fire({
                 icon: 'error',
                 title: "Opps",
-                text: "Something Wrong Bro",
+                text: "Terjadi Suatu Kesalahan",
             })
         @endif
         $('#table-data').DataTable();
